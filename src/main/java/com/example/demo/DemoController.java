@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import com.example.demo.Security.UserAccountChangedEvent;
+import com.example.demo.encryption.KmsApi;
 import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.entity.UserDetailsVO;
@@ -299,5 +300,22 @@ public class DemoController {
         // success
         userRepository.delete(userExist);
         return new ModelAndView("redirect:/");
+    }
+
+    @Autowired
+    private KmsApi kmsApi;
+
+    @GetMapping("/encrypt")
+    public void encrypt()
+    {
+        String strVal = "Hello World";
+        String strEnc = kmsApi.encrypt(strVal);
+        String strDec = kmsApi.decrypt(strEnc);
+
+        //String strCipher = CipherUtil.encrypt(strVal, "hello");
+        //String strPlain1 = CipherUtil.decrypt(strCipher, "hello");
+        //String strPlain2 = CipherUtil.decrypt(strCipher, "heldd");
+
+        int a=3;
     }
 };

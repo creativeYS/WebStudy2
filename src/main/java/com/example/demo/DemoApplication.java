@@ -9,7 +9,9 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 public class DemoApplication {
 
     static {
-        System.setProperty("spring.config.location", "classpath:/application.yml");
+        System.setProperty("spring.config.location",
+                "classpath:/application.yml," +
+                "classpath:/aws.yml");
     }
 
     public static void main(String[] args) {
