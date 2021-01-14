@@ -6,10 +6,11 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.AWSKMSClientBuilder;
-import com.amazonaws.services.kms.model.DecryptRequest;
-import com.amazonaws.services.kms.model.EncryptRequest;
+import com.amazonaws.services.kms.model.*;
 import com.amazonaws.util.Base64;
 import com.example.demo.Security.CustomLoginSuccessHandler;
+import egovframework.rte.fdl.cryptography.EgovPasswordEncoder;
+import egovframework.rte.fdl.cryptography.impl.EgovARIACryptoServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -50,7 +51,38 @@ public class AWSKms implements KmsApi {
                     .build();
         }
 
+        //String desc = "Key for protecting critical data";
+        //CreateKeyRequest req = new CreateKeyRequest().withDescription(desc);
+        //CreateKeyResult result = kms.createKey(req);
+        //String strArn = result.getKeyMetadata().getArn();
 
+        String keyId = arn;//"arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab";
+        GenerateDataKeyRequest dataKeyRequest = new GenerateDataKeyRequest();
+        dataKeyRequest.setKeyId(keyId);
+        dataKeyRequest.setKeySpec("AES_256");
+        GenerateDataKeyResult dataKeyResult = kms.generateDataKey(dataKeyRequest);
+        ByteBuffer plaintextKey = dataKeyResult.getPlaintext();
+        ByteBuffer encryptedKey = dataKeyResult.getCiphertextBlob();
+        //String str11 = new String(plaintextKey.array());
+        //String str22 = new String(encryptedKey.array());
+
+        EncryptRequest req1 = new EncryptRequest().withKeyId(keyId).withPlaintext(plaintextKey);
+        ByteBuffer ciphertext11 = kms.encrypt(req1).getCiphertextBlob();
+
+        DecryptRequest req2 = new DecryptRequest().withCiphertextBlob(encryptedKey).withKeyId(keyId);
+        ByteBuffer plainText11 = kms.decrypt(req2).getPlaintext();
+
+        DecryptRequest req3 = new DecryptRequest().withCiphertextBlob(ciphertext11).withKeyId(keyId);
+        ByteBuffer plainText22 = kms.decrypt(req3).getPlaintext();
+
+        String testStr = "Hello world!!!ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()1234567890";
+        String test1111 = AriaUtil.encryptedAria(testStr, new String(plainText11.array()));
+        String test2222 = AriaUtil.encryptedAria(testStr, new String(plainText22.array()));
+        // FeH2DUy7wpRshtyQ/DfzvA==
+        String test3333 = AriaUtil.decryptedArea(test1111, new String(ciphertext11.array()));
+        String test3334 = AriaUtil.decryptedArea(test1111, new String(encryptedKey.array()));
+        String test4444 = AriaUtil.decryptedArea(test1111, new String(plainText11.array()));
+        String test5555 = AriaUtil.decryptedArea(test1111, new String(plainText22.array()));
 
 
 
