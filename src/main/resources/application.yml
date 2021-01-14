@@ -6,10 +6,13 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/webtest?serverTimezone=UTC&characterEncoding=utf-8
+    #url: jdbc:mysql://localhost:3306/webtest?serverTimezone=UTC&characterEncoding=utf-8
+    #username: root
+    #password:
+    url: jdbc:mysql://10.10.7.53:3306/escp?serverTimezone=UTC&characterEncoding=utf-8
     username: root
-    password:
-    connection-test-query: SELECT NOW() FROM student
+    password: escpmid@sit
+    #connection-test-query: SELECT NOW() FROM student
   jpa:
     hibernate:
       ddl-auto: update # 없으면 만들어버린다. (table을 바로 수정해버린다.)
@@ -17,7 +20,9 @@ spring:
     show-sql: true
 
   redis:
-    host: localhost
+    #host: localhost
+    host: 10.10.7.53
+    # redis-cli -h 10.10.7.53 -p 6379
     port: 6379
 
   session:
